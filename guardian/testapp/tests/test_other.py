@@ -119,7 +119,7 @@ class GroupPermissionTests(TestDataMixin, TestCase):
     def setUp(self):
         super().setUp()
         self.user = User.objects.get(username='jack')
-        self.group, created = Group.objects.get_or_create(name='jackGroup')
+        self.group, _ = Group.objects.get_or_create(name='jackGroup')
         self.user.groups.add(self.group)
         self.ctype = ContentType.objects.create(
             model='bar', app_label='fake-for-guardian-tests')

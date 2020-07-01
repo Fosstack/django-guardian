@@ -71,7 +71,7 @@ class RunFlakesCommand(Command):
         guardiandir = os.path.join(thisdir, 'guardian')
         warns = 0
         # Define top-level directories
-        for topdir, dirnames, filenames in os.walk(guardiandir):
+        for topdir, _, filenames in os.walk(guardiandir):
             paths = (os.path.join(topdir, f)
                      for f in filenames if f .endswith('.py'))
             for path in paths:

@@ -119,7 +119,7 @@ class Benchmark:
     def grant_perms(self):
         ids = range(1, self.objects_count)
         for user in User.objects.iterator():
-            for x in xrange(self.objects_with_perms_count):
+            for _ in xrange(self.objects_with_perms_count):
                 obj = self.Model.objects.get(id=random.choice(ids))
                 self.grant_perm(user, obj, self.perm)
 
@@ -130,7 +130,7 @@ class Benchmark:
     def check_perms(self):
         ids = range(1, self.objects_count)
         for user in User.objects.iterator():
-            for x in xrange(self.objects_with_perms_count):
+            for _ in xrange(self.objects_with_perms_count):
                 obj = self.Model.objects.get(id=random.choice(ids))
                 self.check_perm(user, obj, self.perm)
 
@@ -138,8 +138,8 @@ class Benchmark:
     def get_objects(self):
         ctype = ContentType.objects.get_for_model(self.Model)
         ids = range(1, self.users_count)
-        for user in User.objects.iterator():
-            for x in xrange(self.objects_with_perms_count):
+        for _ in User.objects.iterator():
+            for _ in xrange(self.objects_with_perms_count):
                 filters = {'user': random.choice(ids),
                            'permission__codename__in': [self.perm],
                            'content_type': ctype

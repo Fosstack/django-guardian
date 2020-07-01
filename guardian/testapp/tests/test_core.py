@@ -34,7 +34,7 @@ class CustomUserTests(TestCase):
 class ObjectPermissionTestCase(TestCase):
 
     def setUp(self):
-        self.group, created = Group.objects.get_or_create(name='jackGroup')
+        self.group, _ = Group.objects.get_or_create(name='jackGroup')
         self.user, created = User.objects.get_or_create(username='jack')
         self.user.groups.add(self.group)
         self.ctype = ContentType.objects.create(

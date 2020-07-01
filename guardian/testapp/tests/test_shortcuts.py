@@ -893,7 +893,6 @@ class GetObjectsForUser(TestCase):
 
     def test_has_global_permission_only(self):
         group_names = ['group1', 'group2', 'group3']
-        groups = [Group.objects.create(name=name) for name in group_names]
         # global permission to change any group
         perm = 'auth.change_group'
 
