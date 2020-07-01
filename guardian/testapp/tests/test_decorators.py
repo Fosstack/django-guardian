@@ -224,7 +224,7 @@ class PermissionRequiredTest(TestDataMixin, TestCase):
     def test_user_has_access(self):
 
         perm = get_user_permission_full_codename('change')
-        joe, created = User.objects.get_or_create(username='joe')
+        joe, _ = User.objects.get_or_create(username='joe')
         assign_perm(perm, self.user, obj=joe)
 
         request = self._get_request(self.user)
@@ -256,7 +256,7 @@ class PermissionRequiredTest(TestDataMixin, TestCase):
                 app_label = User._meta.app_label
             __metaclass__ = TestMeta
 
-        joe, created = ProxyUser.objects.get_or_create(username='joe')
+        joe, _ = ProxyUser.objects.get_or_create(username='joe')
         assign_perm(perm, self.user, obj=joe)
 
         request = self._get_request(self.user)
@@ -272,7 +272,7 @@ class PermissionRequiredTest(TestDataMixin, TestCase):
     def test_user_has_obj_access_even_if_we_also_check_for_global(self):
 
         perm = get_user_permission_full_codename('change')
-        joe, created = User.objects.get_or_create(username='joe')
+        joe, _ = User.objects.get_or_create(username='joe')
         assign_perm(perm, self.user, obj=joe)
 
         request = self._get_request(self.user)
@@ -288,7 +288,7 @@ class PermissionRequiredTest(TestDataMixin, TestCase):
     def test_user_has_no_obj_perm_access(self):
 
         perm = get_user_permission_full_codename('change')
-        joe, created = User.objects.get_or_create(username='joe')
+        _, _ = User.objects.get_or_create(username='joe')
 
         request = self._get_request(self.user)
 
@@ -302,7 +302,7 @@ class PermissionRequiredTest(TestDataMixin, TestCase):
     def test_user_has_global_perm_access_but_flag_not_set(self):
 
         perm = get_user_permission_full_codename('change')
-        joe, created = User.objects.get_or_create(username='joe')
+        _, _ = User.objects.get_or_create(username='joe')
         assign_perm(perm, self.user)
 
         request = self._get_request(self.user)
@@ -317,7 +317,7 @@ class PermissionRequiredTest(TestDataMixin, TestCase):
     def test_user_has_global_perm_access(self):
 
         perm = get_user_permission_full_codename('change')
-        joe, created = User.objects.get_or_create(username='joe')
+        _, _ = User.objects.get_or_create(username='joe')
         assign_perm(perm, self.user)
 
         request = self._get_request(self.user)
@@ -335,7 +335,7 @@ class PermissionRequiredTest(TestDataMixin, TestCase):
         request = self._get_request(self.user)
 
         perm = get_user_permission_full_codename('change')
-        joe, created = User.objects.get_or_create(username='joe')
+        joe, _ = User.objects.get_or_create(username='joe')
         assign_perm(perm, self.user, obj=joe)
 
         models = (
