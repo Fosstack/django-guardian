@@ -4,7 +4,7 @@ from guardian.conf import settings
 
 
 class GuardianConfig(AppConfig):
-    name = 'guardian'
+    name = "guardian"
 
     def ready(self):
         # Must patch Group here since generic
