@@ -1,6 +1,12 @@
 from django import forms
 from django.utils.translation import gettext as _
-from guardian.shortcuts import assign_perm, get_group_perms, get_perms_for_model, get_user_perms, remove_perm
+from guardian.shortcuts import (
+    assign_perm,
+    get_group_perms,
+    get_perms_for_model,
+    get_user_perms,
+    remove_perm,
+)
 
 
 class BaseObjectPermissionsForm(forms.Form):
@@ -41,7 +47,7 @@ class BaseObjectPermissionsForm(forms.Form):
         Returns name of the object permissions management field. Default:
         ``permission``.
         """
-        return 'permissions'
+        return "permissions"
 
     def get_obj_perms_field_label(self):
         """
