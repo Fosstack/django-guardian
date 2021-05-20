@@ -16,7 +16,6 @@ register = template.Library()
 
 
 class ObjectPermissionsNode(template.Node):
-
     def __init__(self, for_whom, obj, context_var, checker=None):
         self.for_whom = template.Variable(for_whom)
         self.obj = template.Variable(obj)
@@ -35,17 +34,22 @@ class ObjectPermissionsNode(template.Node):
             self.user = None
             self.group = for_whom
         else:
-            raise NotUserNorGroup("User or Group instance required (got %s)"
-                                  % for_whom.__class__)
+            raise NotUserNorGroup(
+                "User or Group instance required (got %s)" % for_whom.__class__
+            )
         obj = self.obj.resolve(context)
         if not obj:
-            return ''
+            return ""
 
-        check = self.checker.resolve(context) if self.checker else ObjectPermissionChecker(for_whom)
+        check = (
+            self.checker.resolve(context)
+            if self.checker
+            else ObjectPermissionChecker(for_whom)
+        )
         perms = check.get_perms(obj)
 
         context[self.context_var] = perms
-        return ''
+        return ""
 
 
 @register.tag
@@ -83,16 +87,18 @@ def get_obj_perms(parser, token):
     """
     bits = token.split_contents()
     format = '{% get_obj_perms user/group for obj as "context_var" perm_checker %}'
-    if not (6 <= len(bits) <= 7) or bits[2] != 'for' or bits[4] != 'as':
-        raise template.TemplateSyntaxError("get_obj_perms tag should be in "
-                                           "format: %s" % format)
+    if not (6 <= len(bits) <= 7) or bits[2] != "for" or bits[4] != "as":
+        raise template.TemplateSyntaxError(
+            "get_obj_perms tag should be in " "format: %s" % format
+        )
 
     for_whom = bits[1]
     obj = bits[3]
     context_var = bits[5]
     if context_var[0] != context_var[-1] or context_var[0] not in ('"', "'"):
-        raise template.TemplateSyntaxError("get_obj_perms tag's context_var "
-                                           "argument should be in quotes")
+        raise template.TemplateSyntaxError(
+            "get_obj_perms tag's context_var " "argument should be in quotes"
+        )
     context_var = context_var[1:-1]
     checker = bits[6] if len(bits) == 7 else None
     return ObjectPermissionsNode(for_whom, obj, context_var, checker)
