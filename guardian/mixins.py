@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required, REDIRECT_FIELD_NAME
 from django.core.exceptions import ImproperlyConfigured, PermissionDenied
 from guardian.utils import get_user_obj_perms_model
+
 UserObjectPermission = get_user_obj_perms_model()
 from guardian.utils import get_40x_or_None, get_anonymous_user
 from guardian.shortcuts import get_objects_for_user
@@ -38,14 +39,14 @@ class LoginRequiredMixin:
         *Default*: ``settings.LOGIN_URL``
 
     """
+
     redirect_field_name = REDIRECT_FIELD_NAME
     login_url = settings.LOGIN_URL
 
     def dispatch(self, request, *args, **kwargs):
-        return login_required(redirect_field_name=self.redirect_field_name,
-                              login_url=self.login_url)(
-            super().dispatch
-        )(request, *args, **kwargs)
+        return login_required(
+            redirect_field_name=self.redirect_field_name, login_url=self.login_url
+        )(super().dispatch)(request, *args, **kwargs)
 
 
 class PermissionRequiredMixin:
@@ -127,6 +128,7 @@ class PermissionRequiredMixin:
          or ``self.object`` by default.
 
     """
+
     # default class view settings
     login_url = settings.LOGIN_URL
     permission_required = None
@@ -149,17 +151,22 @@ class PermissionRequiredMixin:
         elif isinstance(self.permission_required, Iterable):
             perms = [p for p in self.permission_required]
         else:
-            raise ImproperlyConfigured("'PermissionRequiredMixin' requires "
-                                       "'permission_required' attribute to be set to "
-                                       "'<app_label>.<permission codename>' but is set to '%s' instead"
-                                       % self.permission_required)
+            raise ImproperlyConfigured(
+                "'PermissionRequiredMixin' requires "
+                "'permission_required' attribute to be set to "
+                "'<app_label>.<permission codename>' but is set to '%s' instead"
+                % self.permission_required
+            )
         return perms
 
     def get_permission_object(self):
-        if hasattr(self, 'permission_object'):
+        if hasattr(self, "permission_object"):
             return self.permission_object
-        return (hasattr(self, 'get_object') and self.get_object() or
-                getattr(self, 'object', None))
+        return (
+            self.get_object()
+            if hasattr(self, "get_object")
+            else getattr(self, "object", None)
+        )
 
     def check_permissions(self, request):
         """
@@ -170,16 +177,16 @@ class PermissionRequiredMixin:
         """
         obj = self.get_permission_object()
 
-        forbidden = get_40x_or_None(request,
-                                    perms=self.get_required_permissions(
-                                        request),
-                                    obj=obj,
-                                    login_url=self.login_url,
-                                    redirect_field_name=self.redirect_field_name,
-                                    return_403=self.return_403,
-                                    return_404=self.return_404,
-                                    accept_global_perms=self.accept_global_perms
-                                    )
+        forbidden = get_40x_or_None(
+            request,
+            perms=self.get_required_permissions(request),
+            obj=obj,
+            login_url=self.login_url,
+            redirect_field_name=self.redirect_field_name,
+            return_403=self.return_403,
+            return_404=self.return_404,
+            accept_global_perms=self.accept_global_perms,
+        )
         if forbidden:
             self.on_permission_check_fail(request, forbidden, obj=obj)
         if forbidden and self.raise_exception:
@@ -208,7 +215,6 @@ class PermissionRequiredMixin:
 
 
 class GuardianUserMixin:
-
     @staticmethod
     def get_anonymous():
         return get_anonymous_user()
@@ -251,6 +257,7 @@ class PermissionListMixin:
         *Default*: ``{}``,  A extra params to pass for ```guardian.shortcuts.get_objects_for_user```
 
     """
+
     permission_required = None
     get_objects_for_user_extra_kwargs = {}
 
@@ -267,10 +274,12 @@ class PermissionListMixin:
         elif isinstance(self.permission_required, Iterable):
             perms = [p for p in self.permission_required]
         else:
-            raise ImproperlyConfigured("'PermissionRequiredMixin' requires "
-                                       "'permission_required' attribute to be set to "
-                                       "'<app_label>.<permission codename>' but is set to '%s' instead"
-                                       % self.permission_required)
+            raise ImproperlyConfigured(
+                "'PermissionRequiredMixin' requires "
+                "'permission_required' attribute to be set to "
+                "'<app_label>.<permission codename>' but is set to '%s' instead"
+                % self.permission_required
+            )
         return perms
 
     def get_get_objects_for_user_kwargs(self, queryset):
@@ -279,10 +288,12 @@ class PermissionListMixin:
 
         :param request: Queryset to filter
         """
-        return dict(user=self.request.user,
-                    perms=self.get_required_permissions(self.request),
-                    klass=queryset,
-                    **self.get_objects_for_user_extra_kwargs)
+        return dict(
+            user=self.request.user,
+            perms=self.get_required_permissions(self.request),
+            klass=queryset,
+            **self.get_objects_for_user_extra_kwargs
+        )
 
     def get_queryset(self, *args, **kwargs):
         qs = super().get_queryset(*args, **kwargs)
